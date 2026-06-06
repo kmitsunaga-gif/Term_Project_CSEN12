@@ -1,3 +1,4 @@
+
 /* Kimi Mitsunaga
  * Term Project: Loony Lists
  * June 5th, 2026
@@ -56,6 +57,7 @@ struct node* createNode( LIST* lp, struct node* prev, struct node* next){ // p =
     new->next = next;
 
     prev->next = new;
+    pre->next = new;
     next->prev = new;
 
     new->first = 5;
@@ -75,6 +77,9 @@ struct node* createNode( LIST* lp, struct node* prev, struct node* next){ // p =
 LIST* createList( int (*compare)() ){
 
     LIST *lp = malloc( sizeof( LIST) );
+struct LIST *createList( int (*compare)() ){
+
+    struct LIST *lp = malloc( sizeof( struct LIST) );
 
     node* dummy = malloc( sizeof( struct node ) );
 
@@ -97,6 +102,7 @@ void destroyList(LIST *lp){
 
     while(lp->header->next != lp->header){
         temp = lp->header->next;
+        temp = lp->heder->next;
         lp->header->next = temp->next;
         free(temp->data);
         free(temp);
@@ -190,6 +196,7 @@ void *removeFirst(LIST *lp){
     }
 
     deletedVal = curr->data[curr->first];
+    value = curr->data[curr->first];
     curr->data[curr->first] = NULL;
     curr->first = (curr->first + 1) % curr->length;
     curr->countA--;
@@ -227,6 +234,7 @@ void *removeLast(LIST *lp){
     last = (curr->first + curr->countA - 1) % curr->length;
 
     delVal = curr->data[last];
+    value = curr->data[last];
     curr->data[last] = NULL;
     curr->countA--;
     lp->countN--;

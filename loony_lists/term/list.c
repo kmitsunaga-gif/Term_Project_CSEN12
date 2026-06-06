@@ -12,6 +12,8 @@
 #include<assert.h>
 #include <stdlib.h>
 
+#define maxlength 10
+
 struct node{
 
     struct node* prev;
@@ -36,18 +38,28 @@ struct list{
 
 // ------------ FUNCTIONS ------------- //
 
-//TAKEN FROM LAB 5.2 - mknode();
-
 //Purpose: creates new node
 //Parameters: left and right nodes, count,
 //Returns: new node pointer
 //Runtime: O(1)
 
-struct node* mknode( int count, struct node* prev, struct node* next){ // p = prev, n = next
+struct node* createNode( LIST* lp, struct node* prev, struct node* next){ // p = prev, n = next
 
     assert( count >= 0 );
 
     struct node* new = malloc( sizeof( struct node ) );
+
+    new->data = malloc( sizeof(struct node) * 2 * maxlength );
+    new->length = length * 2;
+    
+    new->prev = prev;
+    new->next = next;
+
+    pre->next = new;
+    next->prev = new;
+
+    new->first = 5;
+    new->countA = 0;
 
 
     return new;
@@ -108,14 +120,14 @@ void addFirst(LIST *lp, void *item){
     struct node curr;
 
     if(lp->countN == 0){
-        curr = mknode(lp, lp->header, lp->header);
+        curr = createNode(lp, lp->header, lp->header);
     }
     else{
         curr = lp->header->next;
     }
 
     if( curr->countA == curr->length){
-        curr = mknode(lp, lp->header, curr);
+        curr = createNode(lp, lp->header, curr);
     }
     if( curr->countA != 0){
         curr->first = (curr->first - 1 + curr->length ) % curr->length;
@@ -136,13 +148,13 @@ void addLast(LIST *lp, void *item){
 
     if (lp->countN == 0){
 
-        curr = mknode(lp, lp->header, lp->header);
+        curr = createNode(lp, lp->header, lp->header);
     }
     else{
         curr = lp->header->prev;
     }
     if (curr->countA == curr->length){
-        curr = mknode(lp, curr, lp->header);
+        curr = createNode(lp, curr, lp->header);
     }
 
     last = (curr->first + curr->countA) % curr->length;
@@ -183,7 +195,7 @@ void *removeFirst(LIST *lp){
     curr->countA--;
     lp->countN--;
 
-    return value;
+    return deletedVal;
 
 }
 
@@ -198,7 +210,7 @@ void *removeLast(LIST *lp){
     struct node *temp = lp->header->prev;
     struct node *curr = lp->header->prev;
 
-    void *value;
+    void *delVal;
     int last;
 
     if (curr->countA == 0) {
@@ -219,7 +231,7 @@ void *removeLast(LIST *lp){
     curr->countA--;
     lp->countN--;
 
-    return value;
+    return delVal;
 
 }
 
