@@ -1,87 +1,64 @@
-
 /* Kimi Mitsunaga
  * Term Project: Loony Lists
  * June 5th, 2026
- *
- * Project Description:
- *
- *   
- *   
  */
 
 #include <stdio.h>
-#include<assert.h>
+#include <assert.h>
 #include <stdlib.h>
+#include "list.h"
+
 
 #define maxlength 10
 
-struct node{
-
+struct node {
     struct node* prev;
     struct node* next;
-
     void** data;
     int first;
-
-    int countA;         //count of elements in array
+    int countA;         // count of elements in array
     int length;
-
 };
 
-struct list{
-
+struct list {
     struct node* header;
-    int countN;             //count of nodes in list
+    int countN;         // total count of items across all nodes
     int (*compare)();
-
 };
-
 
 // ------------ FUNCTIONS ------------- //
 
-//Purpose: creates new node
-//Parameters: left and right nodes, count,
-//Returns: new node pointer
-//Runtime: O(1)
-
-struct node* createNode( LIST* lp, struct node* prev, struct node* next){ // p = prev, n = next
-
-    assert( count >= 0 );
-
-    struct node* new = malloc( sizeof( struct node ) );
-
-    new->data = malloc( sizeof(struct node) * 2 * maxlength );
-    new->length = length * 2;
+struct node* createNode(LIST* lp, struct node* prev, struct node* next) {
+    struct node* new_node = malloc(sizeof(struct node));
+    assert(new_node != NULL);
     
-    new->prev = prev;
-    new->next = next;
+    new_node->prev = prev;
+    new_node->next = next;
 
-    prev->next = new;
-    pre->next = new;
-    next->prev = new;
+    int newLength = (prev->length == 0 ) ? maxlength : 2 * prev->length ;
 
-    new->first = 5;
-    new->countA = 0;
+    new_node->data = malloc( sizeof(void*) * newLength );
+    new_node->length = newLength;
 
+    if (prev != NULL){
+        prev->next = new_node;
+    }
+    if (next != NULL){
+        next->prev = new_node;
+    }
 
-    return new;
+    new_node->first = 0; // Better practice to start at 0 for clean arrays
+    new_node->countA = 0;
 
+    return new_node;
 }
 
-/* Purpose: creates new node
-// Parameters: function pointer compare()
-// Returns: new list pointer
-// Runtime: O(1)
-*/
+LIST* createList(void) {
+    LIST *lp = malloc(sizeof(LIST));
+    assert(lp != NULL);
 
-LIST* createList( int (*compare)() ){
-
-    LIST *lp = malloc( sizeof( LIST) );
-struct LIST *createList( int (*compare)() ){
-
-    struct LIST *lp = malloc( sizeof( struct LIST) );
-
-    node* dummy = malloc( sizeof( struct node ) );
+    struct node* dummy = malloc(sizeof(struct node));
+    assert(dummy != NULL);
 
     lp->header = dummy;
     lp->header->next = dummy;
@@ -89,41 +66,36 @@ struct LIST *createList( int (*compare)() ){
 
     lp->header->length = 0;
     lp->header->countA = 0;
-
-    lp->compare = compare;
+    lp->countN = 0;
+    lp->compare = NULL;
 
     return lp;
-
 }
 
-void destroyList(LIST *lp){
-    
+void destroyList(LIST *lp) {
+    assert(lp != NULL);
+    struct node* curr = lp->header->next;
     struct node* temp;
 
-    while(lp->header->next != lp->header){
-        temp = lp->header->next;
-        temp = lp->heder->next;
-        lp->header->next = temp->next;
+    while (curr != lp->header) {
+        temp = curr;
+        curr = curr->next;
         free(temp->data);
         free(temp);
     }
 
     free(lp->header);
-    free(temp);
-
+    free(lp);
 }
 
-int numItems(LIST *lp){
-
-    assert( lp != NULL);
+int numItems(LIST *lp) {
+    assert(lp != NULL);
     return lp->countN;
-
 }
-
 void addFirst(LIST *lp, void *item){
 
     assert( lp != NULL && item != NULL);
-    struct node curr;
+    struct node* curr;
 
     if(lp->countN == 0){
         curr = createNode(lp, lp->header, lp->header);
@@ -196,7 +168,7 @@ void *removeFirst(LIST *lp){
     }
 
     deletedVal = curr->data[curr->first];
-    value = curr->data[curr->first];
+    //value = curr->data[curr->first];
     curr->data[curr->first] = NULL;
     curr->first = (curr->first + 1) % curr->length;
     curr->countA--;
@@ -234,7 +206,7 @@ void *removeLast(LIST *lp){
     last = (curr->first + curr->countA - 1) % curr->length;
 
     delVal = curr->data[last];
-    value = curr->data[last];
+    //value = curr->data[last];
     curr->data[last] = NULL;
     curr->countA--;
     lp->countN--;
@@ -268,5 +240,26 @@ void *getItem(LIST *lp, int index){
         }
         return curr->data[(curr->first + index) % curr->length];
     }
+}
+
+void setItem( LIST *lp, int index, void*item){
+
+    if(lp->countN == 0){
+        printf("No nodes in list\n");
+    }
+    else if( (index >= lp->countN) || (index < 0 ) ){
+        printf("Index is invalid\n");
+    }
+    else{
+        struct node* curr = lp->header->next;
+        while( (index - curr->countA >= 0 ) && (curr->length != 0) ){
+            index -= curr->countA;
+            curr = curr->next;
+        }
+
+        curr->data[ (curr->first + index) % curr->length ] = item;
+    }
+
+
 }
 

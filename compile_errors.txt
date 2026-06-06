@@ -1,0 +1,3 @@
+/bin/ld: /tmp/ccxlTYcb.o: in function `main':
+/home/kmitsunaga/csen12/Term_Project_CSEN12/qsort.c:88: multiple definition of `main'; /tmp/ccC8YEHG.o:/home/kmitsunaga/csen12/Term_Project_CSEN12/qsort.c:88: first defined here
+collect2: error: ld returned 1 exit status
